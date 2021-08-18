@@ -31,13 +31,7 @@ public class StudentService {
 	}
 
 	public Student getStudent(long id) throws Exception {
-		List<Student> studentList = null;
-		try(Reader file = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("liststudent.json"))) {
-			studentList = objectMapper.readValue(file, new TypeReference<List<Student>>(){});
-		} catch(Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
+		List<Student> studentList = getListStudent();
 		Student student = null;
 		for(Student s: studentList) {
 			if(id == s.getId()) {
@@ -49,13 +43,7 @@ public class StudentService {
 	}
 
 	public void addStudent(Student student) throws Exception {
-		List<Student> studentList = null;
-		try(Reader file = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("liststudent.json"))) {
-			studentList = objectMapper.readValue(file, new TypeReference<List<Student>>(){});
-		} catch(Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
+		List<Student> studentList = getListStudent();
 		long id = 0;
 		for(Student s: studentList) {
 			if(s.getId() > id) {
