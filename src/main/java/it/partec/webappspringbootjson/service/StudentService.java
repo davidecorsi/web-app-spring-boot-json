@@ -73,5 +73,23 @@ public class StudentService {
 	}
 
 	public void deleteStudent(long id) throws Exception{
+		List<Student> studentList = null;
+		try(Reader file = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("liststudent.json"))) {
+			studentList = objectMapper.readValue(file, new TypeReference<List<Student>>(){});
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		for(int i = 0; i < studentList.size(); i++) {
+			if(studentList.get(i).getId() == id) {
+				studentList.remove(i);
+			}
+		}
+		try(Writer file = new PrintWriter(getClass().getClassLoader().getResource("liststudent.json").getFile())) {
+			file.write(objectMapper.writeValueAsString(studentList));
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 }
