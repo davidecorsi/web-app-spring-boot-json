@@ -1,4 +1,4 @@
-package it.partec.webappspringbootjson.model;
+package it.partec.webappspringbootjson.dto;
 
 import java.io.Serializable;
 
@@ -8,6 +8,7 @@ public class Student implements Serializable{
 	private String name;
 	private String surname;
 	private long age;
+	
 	public long getId() {
 		return id;
 	}

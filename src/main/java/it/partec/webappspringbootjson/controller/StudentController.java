@@ -1,5 +1,6 @@
 package it.partec.webappspringbootjson.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.partec.webappspringbootjson.model.Student;
+import it.partec.webappspringbootjson.dto.Student;
 import it.partec.webappspringbootjson.service.StudentService;
 
 @RestController
@@ -24,24 +25,16 @@ public class StudentController {
 	private StudentService studentService;
 	
 	@GetMapping
-	public ResponseEntity<List<Student>> getListStudent() {
+	public ResponseEntity<List<Student>> getListStudent() throws IOException {
 		List<Student> studentList = null;
-		try {
-			studentList = studentService.getListStudent();
-		} catch(Exception e) {
-			return new ResponseEntity<List<Student>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		studentList = studentService.getListStudent();
 		return new ResponseEntity<List<Student>>(studentList, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Student> getStudent(@PathVariable("id") long id) {
+	public ResponseEntity<Student> getStudent(@PathVariable("id") long id) throws Exception {
 		Student student = null;
-		try {
-			student = studentService.getStudent(id);
-		} catch(Exception e) {
-			return new ResponseEntity<Student>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		student = studentService.getStudent(id);
 		if(student != null) {
 			return new ResponseEntity<Student>(student, HttpStatus.OK);
 		}
@@ -49,22 +42,14 @@ public class StudentController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> addStudent(@RequestBody Student student) {
-		try {
-			studentService.addStudent(student);
-		} catch(Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	public ResponseEntity<Object> addStudent(@RequestBody Student student) throws IOException {
+		studentService.addStudent(student);	
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> deleteStudent(@PathVariable("id") long id) {
-		try {
-			studentService.deleteStudent(id);
-		} catch(Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	public ResponseEntity<Object> deleteStudent(@PathVariable("id") long id) throws Exception {
+		studentService.deleteStudent(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
