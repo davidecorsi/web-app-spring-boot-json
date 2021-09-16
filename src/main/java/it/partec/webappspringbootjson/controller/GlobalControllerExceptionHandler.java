@@ -28,41 +28,35 @@ public class GlobalControllerExceptionHandler {
 
 	@ExceptionHandler(value = { InvalidDefinitionException.class })
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public Errore invalidDefinitionException(Exception e)
-	{
+	public Errore invalidDefinitionException(Exception e) {
 		e.printStackTrace();
 		return new Errore("404", "NOT FOUND");
 	}
 
 	@ExceptionHandler(value = { ServletException.class })
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public Errore servletException(Exception e)
-	{
+	public Errore servletException(Exception e) {
 		e.printStackTrace();
 		return new Errore("404", "NOT FOUND");
 	}
 
 	@ExceptionHandler(value = { MissingRequestHeaderException.class })
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public Errore missingRequestHeaderException(Exception e)
-	{
+	public Errore missingRequestHeaderException(Exception e) {
 		e.printStackTrace();
 		return new Errore("403", "ERRORE NELLA RICHIESTA");
-
 	}
 
 	@ExceptionHandler(value = { MissingServletRequestParameterException.class })
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public Errore missingServletRequestParameterException(Exception e)
-	{
+	public Errore missingServletRequestParameterException(Exception e) {
 		e.printStackTrace();
 		return new Errore("400", "BAD REQUEST");
 	}
 
 	@ExceptionHandler(value = { HttpMessageConversionException.class })
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public Errore httpMessageConversionException(Exception e)
-	{
+	public Errore httpMessageConversionException(Exception e) {
 		e.printStackTrace();
 		return new Errore("404", "ERRORE NELLA RICHIESTA");
 	}
