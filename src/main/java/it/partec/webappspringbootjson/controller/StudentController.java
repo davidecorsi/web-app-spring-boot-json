@@ -1,5 +1,6 @@
 package it.partec.webappspringbootjson.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +23,15 @@ public class StudentController {
 	private StudentService studentService;
 	
 	@GetMapping
-	public ResponseEntity<List<Student>> getListStudent() {
+	public ResponseEntity<List<Student>> getListStudent() throws IOException {
 		List<Student> studentList = null;
-		try {
-			studentList = studentService.getListStudent();
-		} catch(Exception e) {
-			return new ResponseEntity<List<Student>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		studentList = studentService.getListStudent();
 		return new ResponseEntity<List<Student>>(studentList, HttpStatus.OK);
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> addStudent(@RequestBody Student student) {
-		try {
-			studentService.addStudent(student);
-		} catch(Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	public ResponseEntity<Object> addStudent(@RequestBody Student student) throws IOException {
+		studentService.addStudent(student);
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 }
