@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.partec.webappspringbootjson.dto.Student;
 import it.partec.webappspringbootjson.service.impl.StudentServiceImpl;
+import it.partec.webappspringbootjson.utils.StudentUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class StudentServiceTests {
@@ -33,11 +34,7 @@ public class StudentServiceTests {
 	
 	@Test
 	void getListStudentTest() throws Exception {
-		Student student = new Student();
-		student.setId(1);
-		student.setName("Antonio");
-		student.setSurname("Frattasi");
-		student.setAge(22);
+		Student student = StudentUtils.getOneStudent();
 		List<Student> studentList = Arrays.asList(student);
 		when(objectMapper.readValue(any(Reader.class), any(TypeReference.class)))
 		.thenReturn(studentList);
@@ -49,5 +46,30 @@ public class StudentServiceTests {
 		when(objectMapper.readValue(any(Reader.class), any(TypeReference.class)))
 		.thenThrow(IOException.class);
 		assertThrows(IOException.class, () -> studentService.getListStudent());
+	}
+	
+	@Test
+	void getStudentTest() throws IOException {
+		Student student = StudentUtils.getOneStudent();
+		List<Student> studentList = Arrays.asList(student);
+		when(objectMapper.readValue(any(Reader.class), any(TypeReference.class)))
+		.thenReturn(studentList);
+		assertEquals(studentService.getStudent(1), student);
+	}
+	
+	@Test
+	void getStudentNullTest() throws IOException {
+		Student student = StudentUtils.getOneStudent();
+		List<Student> studentList = Arrays.asList(student);
+		when(objectMapper.readValue(any(Reader.class), any(TypeReference.class)))
+		.thenReturn(studentList);
+		assertEquals(studentService.getStudent(2), null);
+	}
+	
+	@Test
+	void getStudentExceptionTest() throws IOException {
+		when(objectMapper.readValue(any(Reader.class), any(TypeReference.class)))
+		.thenThrow(IOException.class);
+		assertThrows(IOException.class, () -> studentService.getStudent(1));
 	}
 }

@@ -19,27 +19,24 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import it.partec.webappspringbootjson.dto.Student;
 import it.partec.webappspringbootjson.service.StudentService;
+import it.partec.webappspringbootjson.utils.StudentUtils;
 
 @WebMvcTest(StudentController.class)
 public class StudentControllerTests {
-	
+
 	@Autowired
 	private MockMvc mvc;
-	
+
 	@MockBean
 	private StudentService studentService;
-	
+
 	@Test
 	void getListStudentTest() throws Exception {
-		Student student = new Student();
-		student.setId(1);
-		student.setName("Antonio");
-		student.setSurname("Frattasi");
-		student.setAge(22);
+		Student student = StudentUtils.getOneStudent();
 		List<Student> studentList = Arrays.asList(student);
 		when(studentService.getListStudent()).thenReturn(studentList);
 		mvc.perform(get("/student")
-		.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$", hasSize(1)))
 		.andExpect(jsonPath("$[0].id", is((int) student.getId())))
@@ -47,12 +44,43 @@ public class StudentControllerTests {
 		.andExpect(jsonPath("$[0].surname", is(student.getSurname())))
 		.andExpect(jsonPath("$[0].age", is((int) student.getAge())));
 	}
-	
+
 	@Test
-	void getListStudentException() throws Exception {
+	void getListStudentExceptionTest() throws Exception {
 		when(studentService.getListStudent()).thenThrow(IOException.class);
 		mvc.perform(get("/student")
-		.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isInternalServerError())
+		.andExpect(jsonPath("$.status", is("503")))
+		.andExpect(jsonPath("$.error", is("ERRORE INTERNO")));
+	}
+
+	@Test
+	void getStudentTest() throws Exception {
+		Student student = StudentUtils.getOneStudent();
+		when(studentService.getStudent(1)).thenReturn(student);
+		mvc.perform(get("/student/1")
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.id", is((int) student.getId())))
+		.andExpect(jsonPath("$.name", is(student.getName())))
+		.andExpect(jsonPath("$.surname", is(student.getSurname())))
+		.andExpect(jsonPath("$.age", is((int) student.getAge())));	
+	}
+
+	@Test
+	void getStudentNotFoundTest() throws Exception {
+		when(studentService.getListStudent()).thenReturn(null);
+		mvc.perform(get("/student/1")
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void getStudentExceptionTest() throws Exception {
+		when(studentService.getStudent(1)).thenThrow(IOException.class);
+		mvc.perform(get("/student/1")
+				.contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().isInternalServerError())
 		.andExpect(jsonPath("$.status", is("503")))
 		.andExpect(jsonPath("$.error", is("ERRORE INTERNO")));
