@@ -49,7 +49,7 @@ public class StudentControllerTests {
 	}
 	
 	@Test
-	void getListStudentException() throws Exception {
+	void getListStudentExceptionTest() throws Exception {
 		when(studentService.getListStudent()).thenThrow(IOException.class);
 		mvc.perform(get("/student")
 		.contentType(MediaType.APPLICATION_JSON))
