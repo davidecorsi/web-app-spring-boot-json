@@ -5,29 +5,53 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.ImmutableTag;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.Timer.Sample;
 import it.partec.webappspringbootjson.dto.Student;
 import it.partec.webappspringbootjson.service.StudentService;
 
 @Service
 public class StudentServiceImpl implements StudentService {
-
+	
+	private Counter counterGetList;
+	private AtomicInteger gaugeGetList;
+	private Timer timerGetList;
+	
+	public StudentServiceImpl(MeterRegistry meterRegistry) {
+		this.counterGetList = meterRegistry.counter("counter_get_list", "type", "service");
+		this.gaugeGetList = meterRegistry.gauge("gauge_get_list", 
+				Arrays.asList(new ImmutableTag("type", "service")), new AtomicInteger());
+		this.timerGetList = meterRegistry.timer("timer_get_list", "type", "service");
+	}
+	
 	@Autowired
 	private ObjectMapper objectMapper;
 
 	public List<Student> getListStudent() throws IOException {
+		Sample sample = Timer.start();
+		counterGetList.increment();
 		List<Student> studentList = null;
 		try(Reader file = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("liststudent.json"))) {
 			studentList = objectMapper.readValue(file, new TypeReference<List<Student>>(){});
+			gaugeGetList.set(studentList.size());
 		} catch(IOException e) {
 			e.printStackTrace();
 			throw e;
+		} finally {
+			sample.stop(timerGetList);
 		}
 		return studentList;
 	}
