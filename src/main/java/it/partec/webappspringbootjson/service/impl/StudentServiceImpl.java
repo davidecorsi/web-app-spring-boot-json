@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.partec.webappspringbootjson.dto.Student;
+import it.partec.webappspringbootjson.exception.CommonException;
 import it.partec.webappspringbootjson.service.StudentService;
 
 @Service
@@ -21,18 +22,17 @@ public class StudentServiceImpl implements StudentService {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	public List<Student> getListStudent() throws IOException {
+	public List<Student> getListStudent() throws Exception {
 		List<Student> studentList = null;
 		try(Reader file = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("liststudent.json"))) {
 			studentList = objectMapper.readValue(file, new TypeReference<List<Student>>(){});
 		} catch(IOException e) {
-			e.printStackTrace();
-			throw e;
+			throw new CommonException(e);
 		}
 		return studentList;
 	}
 
-	public void addStudent(Student student) throws IOException {
+	public void addStudent(Student student) throws Exception {
 		List<Student> studentList = getListStudent();
 		long id = 0;
 		for(Student s: studentList) {
@@ -45,8 +45,7 @@ public class StudentServiceImpl implements StudentService {
 		try(Writer file = new PrintWriter(getClass().getClassLoader().getResource("liststudent.json").getFile())) {
 			file.write(objectMapper.writeValueAsString(studentList));
 		} catch(IOException e) {
-			e.printStackTrace();
-			throw e;
+			throw new CommonException(e);
 		}
 	}
 }
