@@ -21,6 +21,8 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.Timer.Sample;
 import it.partec.webappspringbootjson.dto.Student;
+import it.partec.webappspringbootjson.exception.CommonException;
+import it.partec.webappspringbootjson.exception.StudentNotFoundException;
 import it.partec.webappspringbootjson.service.StudentService;
 
 @Service
@@ -40,7 +42,7 @@ public class StudentServiceImpl implements StudentService {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	public List<Student> getListStudent() throws IOException {
+	public List<Student> getListStudent() throws Exception {
 		Sample sample = Timer.start();
 		counterGetList.increment();
 		List<Student> studentList = null;
@@ -48,15 +50,14 @@ public class StudentServiceImpl implements StudentService {
 			studentList = objectMapper.readValue(file, new TypeReference<List<Student>>(){});
 			gaugeGetList.set(studentList.size());
 		} catch(IOException e) {
-			e.printStackTrace();
-			throw e;
+			throw new CommonException(e);
 		} finally {
 			sample.stop(timerGetList);
 		}
 		return studentList;
 	}
 
-	public Student getStudent(long id) throws IOException {
+	public Student getStudent(long id) throws Exception {
 		List<Student> studentList = getListStudent();
 		Student student = null;
 		for(Student s: studentList) {
@@ -65,10 +66,13 @@ public class StudentServiceImpl implements StudentService {
 				break;
 			}
 		}
+		if(student == null) {
+			throw new StudentNotFoundException("Lo studente non è stato trovato");
+		}
 		return student;
 	}
 
-	public void addStudent(Student student) throws IOException {
+	public void addStudent(Student student) throws Exception {
 		List<Student> studentList = getListStudent();
 		long id = 0;
 		for(Student s: studentList) {
@@ -81,27 +85,30 @@ public class StudentServiceImpl implements StudentService {
 		try(Writer file = new PrintWriter(getClass().getClassLoader().getResource("liststudent.json").getFile())) {
 			file.write(objectMapper.writeValueAsString(studentList));
 		} catch(IOException e) {
-			e.printStackTrace();
-			throw e;
+			throw new CommonException(e);
 		}
 	}
 
-	public void deleteStudent(long id) throws IOException {
+	public void deleteStudent(long id) throws Exception {
 		List<Student> studentList = getListStudent();
+		boolean checkStudent = false;
 		for(int i = 0; i < studentList.size(); i++) {
 			if(studentList.get(i).getId() == id) {
 				studentList.remove(i);
+				checkStudent = true;
 			}
+		}
+		if(!checkStudent) {
+			throw new StudentNotFoundException("Lo studente non è stato trovato");
 		}
 		writeStudentList(studentList);
 	}
 	
-	private void writeStudentList(List<Student> studentList) throws IOException {
+	private void writeStudentList(List<Student> studentList) throws Exception {
 		try(Writer file = new PrintWriter(getClass().getClassLoader().getResource("liststudent.json").getFile())) {
 			file.write(objectMapper.writeValueAsString(studentList));
 		} catch(IOException e) {
-			e.printStackTrace();
-			throw e;
+			throw new CommonException(e);
 		}
 	}
 }

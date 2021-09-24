@@ -37,7 +37,7 @@ public class StudentController {
 	
 	@GetMapping
 	@Timed("get_list_student_controller")
-	public ResponseEntity<List<Student>> getListStudent() throws IOException {
+	public ResponseEntity<List<Student>> getListStudent() throws Exception {
 		List<Student> studentList = null;
 		studentList = studentService.getListStudent();
 		return new ResponseEntity<List<Student>>(studentList, HttpStatus.OK);
@@ -54,7 +54,7 @@ public class StudentController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> addStudent(@RequestBody Student student, HttpServletRequest req) throws IOException {
+	public ResponseEntity<Object> addStudent(@RequestBody Student student, HttpServletRequest req) throws Exception {
 		distributionSummaryGetList.record(req.getContentLength());
 		studentService.addStudent(student);	
 		return new ResponseEntity<>(HttpStatus.CREATED);
