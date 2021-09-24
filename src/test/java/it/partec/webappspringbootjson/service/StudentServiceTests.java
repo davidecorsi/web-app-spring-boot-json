@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.partec.webappspringbootjson.dto.Student;
+import it.partec.webappspringbootjson.exception.CommonException;
 import it.partec.webappspringbootjson.service.impl.StudentServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +49,6 @@ public class StudentServiceTests {
 	void getListStudentExceptionTest() throws IOException {
 		when(objectMapper.readValue(any(Reader.class), any(TypeReference.class)))
 		.thenThrow(IOException.class);
-		assertThrows(IOException.class, () -> studentService.getListStudent());
+		assertThrows(CommonException.class, () -> studentService.getListStudent());
 	}
 }

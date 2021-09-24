@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConversionException;
 
 import it.partec.webappspringbootjson.dto.Errore;
+import it.partec.webappspringbootjson.exception.CommonException;
+import it.partec.webappspringbootjson.exception.StudentNotFoundException;
 
 @RestControllerAdvice
 public class GlobalControllerExceptionHandler {
@@ -60,10 +62,25 @@ public class GlobalControllerExceptionHandler {
 		e.printStackTrace();
 		return new Errore("404", "ERRORE NELLA RICHIESTA");
 	}
+	
+	@ExceptionHandler(value = { StudentNotFoundException.class })
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public Errore studentNotFoundException(Exception e) {
+		e.printStackTrace();
+		return new Errore("404", "NOT FOUND");
+	}
 
+	@ExceptionHandler(value = { CommonException.class })
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public Errore commonException(Exception e) {
+		e.printStackTrace();
+		return new Errore("503", "ERRORE INTERNO");
+	}
+	
 	@ExceptionHandler(value = { Exception.class })
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public Errore customizeException(Exception e) {
+		e.printStackTrace();
 		return new Errore("503", "ERRORE INTERNO");
 	}
 }
