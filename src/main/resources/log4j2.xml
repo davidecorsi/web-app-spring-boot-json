@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+
+	<Appenders>
+		<Console name="console-log" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{DEFAULT} %X{username} [%t] %highlight{%-5p} %c{1.}.%M %m%n" />
+		</Console>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="it.partec" level="debug" additivity="false">
+			<appender-ref ref="console-log" />
+		</Logger>
+
+		<Root level="debug">
+			<AppenderRef ref="console-log" />
+		</Root>
+	</Loggers>
+
+</Configuration>
