@@ -25,7 +25,7 @@ public class StudentController {
 	private StudentService studentService;
 	
 	@GetMapping
-	public ResponseEntity<List<Student>> getListStudent() throws IOException {
+	public ResponseEntity<List<Student>> getListStudent() throws Exception {
 		List<Student> studentList = null;
 		studentList = studentService.getListStudent();
 		return new ResponseEntity<List<Student>>(studentList, HttpStatus.OK);
@@ -42,7 +42,7 @@ public class StudentController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> addStudent(@RequestBody Student student) throws IOException {
+	public ResponseEntity<Object> addStudent(@RequestBody Student student) throws Exception {
 		studentService.addStudent(student);	
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
