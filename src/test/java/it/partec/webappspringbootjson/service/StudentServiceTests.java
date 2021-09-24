@@ -20,6 +20,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.partec.webappspringbootjson.dto.Student;
+import it.partec.webappspringbootjson.exception.CommonException;
+import it.partec.webappspringbootjson.exception.StudentNotFoundException;
 import it.partec.webappspringbootjson.service.impl.StudentServiceImpl;
 import it.partec.webappspringbootjson.utils.StudentUtils;
 
@@ -45,11 +47,11 @@ public class StudentServiceTests {
 	void getListStudentExceptionTest() throws IOException {
 		when(objectMapper.readValue(any(Reader.class), any(TypeReference.class)))
 		.thenThrow(IOException.class);
-		assertThrows(IOException.class, () -> studentService.getListStudent());
+		assertThrows(CommonException.class, () -> studentService.getListStudent());
 	}
 	
 	@Test
-	void getStudentTest() throws IOException {
+	void getStudentTest() throws Exception {
 		Student student = StudentUtils.getOneStudent();
 		List<Student> studentList = Arrays.asList(student);
 		when(objectMapper.readValue(any(Reader.class), any(TypeReference.class)))
@@ -63,13 +65,13 @@ public class StudentServiceTests {
 		List<Student> studentList = Arrays.asList(student);
 		when(objectMapper.readValue(any(Reader.class), any(TypeReference.class)))
 		.thenReturn(studentList);
-		assertEquals(studentService.getStudent(2), null);
+		assertThrows(StudentNotFoundException.class, () -> studentService.getStudent(2));
 	}
 	
 	@Test
 	void getStudentExceptionTest() throws IOException {
 		when(objectMapper.readValue(any(Reader.class), any(TypeReference.class)))
 		.thenThrow(IOException.class);
-		assertThrows(IOException.class, () -> studentService.getStudent(1));
+		assertThrows(CommonException.class, () -> studentService.getStudent(1));
 	}
 }
