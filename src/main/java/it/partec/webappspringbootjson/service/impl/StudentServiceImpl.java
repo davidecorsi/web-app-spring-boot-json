@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.partec.webappspringbootjson.dto.Student;
+import it.partec.webappspringbootjson.exception.StudentNotFoundException;
 import it.partec.webappspringbootjson.service.StudentService;
 
 @Service
@@ -32,7 +33,7 @@ public class StudentServiceImpl implements StudentService {
 		return studentList;
 	}
 
-	public Student getStudent(long id) throws IOException {
+	public Student getStudent(long id) throws Exception {
 		List<Student> studentList = getListStudent();
 		Student student = null;
 		for(Student s: studentList) {
@@ -40,6 +41,9 @@ public class StudentServiceImpl implements StudentService {
 				student = s;
 				break;
 			}
+		}
+		if(student == null) {
+			throw new StudentNotFoundException("Lo studente non è stato trovato");
 		}
 		return student;
 	}
@@ -62,12 +66,17 @@ public class StudentServiceImpl implements StudentService {
 		}
 	}
 
-	public void deleteStudent(long id) throws IOException {
+	public void deleteStudent(long id) throws Exception {
 		List<Student> studentList = getListStudent();
+		boolean checkStudent = false;
 		for(int i = 0; i < studentList.size(); i++) {
 			if(studentList.get(i).getId() == id) {
 				studentList.remove(i);
+				checkStudent = true;
 			}
+		}
+		if(!checkStudent) {
+			throw new StudentNotFoundException("Lo studente non è stato trovato");
 		}
 		writeStudentList(studentList);
 	}

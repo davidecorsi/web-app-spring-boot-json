@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConversionException;
 
 import it.partec.webappspringbootjson.dto.Errore;
+import it.partec.webappspringbootjson.exception.StudentNotFoundException;
 
 @RestControllerAdvice
 public class GlobalControllerExceptionHandler {
@@ -59,6 +60,13 @@ public class GlobalControllerExceptionHandler {
 	public Errore httpMessageConversionException(Exception e) {
 		e.printStackTrace();
 		return new Errore("404", "ERRORE NELLA RICHIESTA");
+	}
+	
+	@ExceptionHandler(value = { StudentNotFoundException.class })
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public Errore studentNotFoundException(Exception e) {
+		e.printStackTrace();
+		return new Errore("404", "NOT FOUND");
 	}
 
 	@ExceptionHandler(value = { Exception.class })
