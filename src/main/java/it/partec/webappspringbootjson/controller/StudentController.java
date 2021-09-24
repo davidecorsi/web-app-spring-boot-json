@@ -1,6 +1,5 @@
 package it.partec.webappspringbootjson.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +28,7 @@ public class StudentController {
 	private StudentService studentService;
 	
 	@GetMapping
-	public ResponseEntity<List<Student>> getListStudent() throws IOException {
+	public ResponseEntity<List<Student>> getListStudent() throws Exception {
 		logger.trace("Inizio getListStudent controller");
 		List<Student> studentList = null;
 		studentList = studentService.getListStudent();
@@ -51,7 +50,7 @@ public class StudentController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> addStudent(@RequestBody Student student) throws IOException {
+	public ResponseEntity<Object> addStudent(@RequestBody Student student) throws Exception {
 		logger.trace("Inizio addStudent controller");
 		studentService.addStudent(student);
 		logger.debug("Fine addStudent controller");
