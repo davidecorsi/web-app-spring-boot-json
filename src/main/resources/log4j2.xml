@@ -4,7 +4,7 @@
 	<Appenders>
 		<Console name="console-log" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="%d{DEFAULT} %X{username} [%t] %highlight{%-5p} %c{1.}.%M %m%n" />
+				pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n" />
 		</Console>
 	</Appenders>
 
